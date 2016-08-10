@@ -31,7 +31,7 @@ import datamodel.ResponseType;
 import datamodel.SlackErrors;
 import datamodel.SlackRequest;
 import datamodel.SlackResponse;
-import datamodel.TTT;
+import game.TTT;
 
 public class Main extends AbstractHandler {
 	private static final Logger LOGGER  = Logger.getLogger(Main.class.getName());
@@ -125,13 +125,13 @@ public class Main extends AbstractHandler {
 					final String[] tokens = text.split(Command.SEPARATOR);
 					String command = tokens[0];
 					try {
-					    slackUsers = getSlackUsers(sRequest.getChannelId());
+					    slackUsers = getSlackUsers(request.getParameter(CHANNEL_ID));
 				    } catch (Exception e) {
 					    // No users found in the team, invalid state but do not want the error to propagate
 					    // Would just add logging/internal errors
 				    	LOGGER.log(Level.SEVERE, "Unable to get slack user list!");
 				    	slackResponse = new SlackResponse(
-								sRequest.getChannelId(),
+				    			SlackErrors.INVALID_CHANNEL_STATE.getValue(),
 								ResponseType.EPHEMERAL.getValue());
 				    }
 					switch (command) {
@@ -218,44 +218,37 @@ public class Main extends AbstractHandler {
     
     private Set<String> getSlackUsers(String channelId) throws IOException{
 		Set<String> usersList = new HashSet<String>();
-		URL url = new URL(SLACK_CHANNEL_URL);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-		String urlParameters = "token=" + apiToken + "&channel=" + channelId;
-		conn.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				conn.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
+		String response = getJSONResponse(SLACK_CHANNEL_URL, "channel", channelId);
 		JSONObject jo1 = new JSONObject(response.toString());
-        JSONObject jo2 = new JSONObject(jo1.get("channel").toString());
-        JSONArray ja = new JSONArray(jo2.get("members").toString());
-        int n = ja.length();
-        for (int i = 0; i < n; i++) {
-        	String userId = ja.getString(i);
-        	usersList.add(getUserName(userId));
-        }
+		JSONObject jo2 = new JSONObject(jo1.get("channel").toString());
+		JSONArray ja = new JSONArray(jo2.get("members").toString());
+		int n = ja.length();
+		for (int i = 0; i < n; i++) {
+			String userId = ja.getString(i);
+			usersList.add(getUserName(userId));
+		}
 		return usersList;
     }
     
     private String getUserName(String userId) throws IOException{
-		URL url = new URL(SLACK_USER_URL);
+    	String response = getJSONResponse(SLACK_USER_URL, "user", userId);
+		JSONObject jo1 = new JSONObject(response);
+		JSONObject jo2 = new JSONObject(jo1.get("user").toString());
+		return jo2.getString("name");
+    }
+    
+    private String getJSONResponse(String urlPath, String paramName, String paramVal) throws IOException{
+		URL url = new URL(urlPath);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-		String urlParameters = "token=" + apiToken + "&user=" + userId;
-
+		String urlParameters = null;
+		if(paramName.equals("channel")){
+		    urlParameters = "token=" + apiToken + "&channel=" + paramVal;
+		}
+		else if(paramName.equals("user")){
+			urlParameters = "token=" + apiToken + "&user=" + paramVal;
+		}
 		conn.setDoOutput(true);
 		DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
 		wr.writeBytes(urlParameters);
@@ -270,8 +263,6 @@ public class Main extends AbstractHandler {
 			response.append(inputLine);
 		}
 		in.close();
-		JSONObject jo1 = new JSONObject(response.toString());
-		JSONObject jo2 = new JSONObject(jo1.get("user").toString());
-		return jo2.getString("name");
+		return response.toString();
     }
 }

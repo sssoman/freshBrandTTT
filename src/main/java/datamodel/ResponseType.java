@@ -1,5 +1,9 @@
 package datamodel;
 
+/**
+ * Response types for Slack Response
+ */
+
 public enum ResponseType {
 	EPHEMERAL("ephemeral"), 
 	IN_CHANNEL("in_channel");

@@ -6,7 +6,7 @@ import datamodel.ResponseType;
 import datamodel.SlackErrors;
 import datamodel.SlackRequest;
 import datamodel.SlackResponse;
-import datamodel.TTT;
+import game.TTT;
 
 public class StatusCommand implements Command{
 

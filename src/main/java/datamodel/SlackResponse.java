@@ -1,5 +1,8 @@
 package datamodel;
 
+/**
+ * Representation of the Slack Response
+ */
 public class SlackResponse {
 
     private String responseType;

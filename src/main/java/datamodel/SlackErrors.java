@@ -1,7 +1,11 @@
 package datamodel;
 
+/**
+ * Error mappings for different error conditions
+ */
 public enum SlackErrors {
 	BAD_REQUEST("Bad Request!"), 
+       INVALID_CHANNEL_STATE("Invalid channel state!"), 
 	GAME_IN_PROG("A current game of tic tac toe is already in progress. Cannot start a new game!"),
 	NOT_TURN("Cannot make a move. It is not your turn!"),
 	ILLEGAL_POS("Illegal position specified!"),
@@ -23,3 +27,4 @@ public enum SlackErrors {
     	return this.value;
     }
 }
+

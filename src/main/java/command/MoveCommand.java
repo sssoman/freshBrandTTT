@@ -6,7 +6,7 @@ import datamodel.ResponseType;
 import datamodel.SlackErrors;
 import datamodel.SlackRequest;
 import datamodel.SlackResponse;
-import datamodel.TTT;
+import game.TTT;
 import datamodel.TTTStatus;
 
 public class MoveCommand implements Command {
@@ -59,7 +59,7 @@ public class MoveCommand implements Command {
 									+ ttt.getCurrentPlayer() + " won!" + "\n"
 									+ ttt.displayBoard();
 						} else if (ttt.getTTTStatus() == TTTStatus.DRAW) {
-							endingMessage = "It is a draw! " + "\n"
+							endingMessage = "Game ends! It is a draw! " + "\n"
 									+ ttt.displayBoard();
 						}
 						if (endingMessage != null) {
@@ -87,6 +87,12 @@ public class MoveCommand implements Command {
 		}
 	}
 
+        /**
+	 * Check if it is player's turn
+	 * @param slackRequest
+	 * @param ttt
+	 * @return If it is player's turn
+	 */
 	private boolean isTurn(SlackRequest slackRequest, TTT ttt) {
 		boolean isTurn = true;
 		if (!ttt.getCurrentPlayer().equals(slackRequest.getUserName())) {

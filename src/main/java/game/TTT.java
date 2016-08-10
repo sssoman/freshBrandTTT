@@ -1,4 +1,7 @@
-package datamodel;
+package game;
+
+import datamodel.SlackErrors;
+import datamodel.TTTStatus;
 
 public class TTT {
 	// X = 1 (player 1), 0 = 0 (player 2), -1 (empty)
