@@ -70,37 +70,6 @@ public class Main extends AbstractHandler {
         expectedToken = System.getenv("SLACK_AUTH_TOKEN");
         apiToken = System.getenv("SLACK_API_TOKEN");
     }
-  
-  /*  @SuppressWarnings("resource")
-	public static void main(String args[]) throws IOException{
-    	Main mn = new Main();
-    	SlackResponse slackResponse = new SlackResponse("fake", ResponseType.EPHEMERAL.getValue());
-    	while(!slackResponse.getText().contains("end") && !slackResponse.getText().contains("draw")){
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String s = br.readLine();
-        final String[] tokens = s.split(Command.SEPARATOR);
-        SlackRequest slackCommand = new SlackRequest();
-        final String cmd = tokens[0];
-        slackCommand.setChannelId("1");
-        slackCommand.setText(s);
-        slackCommand.setUserName("test");
-		switch(cmd){
-            case "start":
-            	slackResponse = mn.startCommandInv.invoke(slackCommand, mn.channelGames, mn.slackUsers);
-                break;
-            case "move":
-            	slackResponse =  mn.markCommandInv.invoke(slackCommand, mn.channelGames, mn.slackUsers);
-                break;
-            case "status":
-            	slackResponse = mn.statusCommandInv.invoke(slackCommand, mn.channelGames, mn.slackUsers);
-                break;
-            default:
-            	slackResponse = new SlackResponse(SlackErrors.BAD_COMMAND.getValue(), ResponseType.EPHEMERAL.getValue());       
-          }
-
-        System.out.println(slackResponse.getText());
-    	}
-    }*/
 
 	@Override
 	public void handle(String target, Request baseRequest,
